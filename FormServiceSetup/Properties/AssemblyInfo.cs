@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ServiceForm")]
+[assembly: AssemblyTitle("FormServiceSetup")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ServiceForm")]
+[assembly: AssemblyProduct("FormServiceSetup")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("022c5553-d4f5-4aed-beea-a27f8e0f5987")]
+[assembly: Guid("59d419f7-5819-4739-80fe-4fa8a37a4f83")]
 
 // Version information for an assembly consists of the following four values:
 //

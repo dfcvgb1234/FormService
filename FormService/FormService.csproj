@@ -36,6 +36,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Kofax.Capture.AdminModule, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2a06c44ecf114f0f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.Capture.AdminModule.dll</HintPath>
+    </Reference>
     <Reference Include="Kofax.Capture.SDK.CustomModule, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2a06c44ecf114f0f, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.Capture.SDK.CustomModule.dll</HintPath>
@@ -44,9 +48,25 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.Capture.SDK.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Kofax.Capture.SDK.Workflow, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2a06c44ecf114f0f, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.Capture.SDK.Workflow.dll</HintPath>
+    </Reference>
     <Reference Include="Kofax.DBLite, Version=6.0.0.0, Culture=neutral, PublicKeyToken=2a06c44ecf114f0f, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.DBLite.dll</HintPath>
+    </Reference>
+    <Reference Include="Kofax.TAPCommon.TAPControls, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b97a7b643e27b375, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.TAPCommon.TAPControls.dll</HintPath>
+    </Reference>
+    <Reference Include="Kofax.TAPCommon.TAPEncryption, Version=8.0.29.0, Culture=neutral, PublicKeyToken=b97a7b643e27b375, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.TAPCommon.TAPEncryption.dll</HintPath>
+    </Reference>
+    <Reference Include="Kofax.TAPCommon.TAPLib, Version=8.0.29.0, Culture=neutral, PublicKeyToken=b97a7b643e27b375, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Kofax\Capture\Bin\Kofax.TAPCommon.TAPLib.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
@@ -183,16 +203,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppSettings.cs" />
-    <Compile Include="BatchManager.cs" />
+    <Compile Include="BatchField.cs" />
+    <Compile Include="Managers\AppSettings.cs" />
+    <Compile Include="Managers\BatchManager.cs" />
     <Compile Include="batchService.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="batchService.Designer.cs">
       <DependentUpon>batchService.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocalizationManager.cs" />
-    <Compile Include="Logging.cs" />
+    <Compile Include="Managers\LocalizationManager.cs" />
+    <Compile Include="Managers\Logging.cs" />
     <Compile Include="Main.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -207,7 +228,16 @@
       <DependentUpon>ProjectInstaller.cs</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XMLSettings.cs" />
+    <Compile Include="Setup\SetupForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Setup\SetupForm.Designer.cs">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Setup\SetupUserControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Managers\XMLSettings.cs" />
     <EmbeddedResource Include="Main.resx">
       <DependentUpon>Main.cs</DependentUpon>
     </EmbeddedResource>
@@ -223,6 +253,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Setup\SetupForm.resx">
+      <DependentUpon>SetupForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

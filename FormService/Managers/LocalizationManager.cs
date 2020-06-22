@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ namespace FormService
     static class LocalizationManager
     {
 
-        static string[] daymonthyear =
+        static string[] g_aDaymonthyear =
         {
             "dd-MM-yyyy", "d-MM-yyyy", "dd-M-yyyy", "d-M-yyyy", "dd-MM-y", "dd-MM-yy", "d-MM-y", "dd-M-y", "d-M-y", "dd-MM-yy", "d-MM-yy", "dd-M-yy", "d-M-yy",
             "dd/MM/yyyy", "d/MM/yyyy", "dd/M/yyyy", "d/M/yyyy", "dd/MM/y", "dd/MM/yy", "d/MM/y", "dd/M/y", "d/M/y", "dd/MM/yy", "d/MM/yy", "dd/M/yy", "d/M/yy",
@@ -20,7 +21,7 @@ namespace FormService
             "dd MM yyyy", "d MM yyyy", "dd M yyyy", "d M yyyy", "dd MM y", "dd MM yy", "d MM y", "dd M y", "d M y", "dd MM yy", "d MM yy", "dd M yy", "d M yy",
             "dd:MM:yyyy", "d:MM:yyyy", "dd:M:yyyy", "d:M:yyyy", "dd:MM:y", "dd:MM:yy", "d:MM:y", "dd:M:y", "d:M:y", "dd:MM:yy", "d:MM:yy", "dd:M:yy", "d:M:yy"
         };
-        static string[] monthdayyear =
+        static string[] g_aMonthdayyear =
         {
             "MM-dd-yyyy", "M-dd-yyyy", "MM-d-yyyy", "M-d-yyyy", "MM-dd-y", "MM-dd-yy", "M-dd-y", "MM-d-y", "M-d-y", "MM-d-yy", "M-d-yy", "MM-d-yy", "M-d-yy",
             "MM/dd/yyyy", "M/dd/yyyy", "MM/d/yyyy", "M/d/yyyy", "MM/dd/y", "MM/dd/yy", "M/dd/y", "MM/d/y", "M/d/y", "MM/d/yy", "M/d/yy", "MM/d/yy", "M/d/yy",
@@ -30,7 +31,7 @@ namespace FormService
             "MM dd yyyy", "M dd yyyy", "MM d yyyy", "M d yyyy", "MM dd y", "MM dd yy", "M dd y", "MM d y", "M d y", "MM d yy", "M d yy", "MM d yy", "M d yy",
             "MM:dd:yyyy", "M:dd:yyyy", "MM:d:yyyy", "M:d:yyyy", "MM:dd:y", "MM:dd:yy", "M:dd:y", "MM:d:y", "M:d:y", "MM:d:yy", "M:d:yy", "MM:d:yy", "M:d:yy"
         };
-        static string[] yearmonthday =
+        static string[] g_aYearmonthday =
         {
             "yyyy-MM-dd", "yyyy-MM-d", "yyyy-M-dd", "yyyy-M-d", "y-MM-d", "yy-MM-dd", "y-MM-d", "y-M-d", "y-M-d", "yy-MM-dd", "yy-MM-d", "yy-M-dd", "yy-M-d",
             "yyyy/MM/dd", "yyyy/MM/d", "yyyy/M/dd", "yyyy/M/d", "y/MM/d", "yy/MM/dd", "y/MM/d", "y/M/d", "y/M/d", "yy/MM/dd", "yy/MM/d", "yy/M/dd", "yy/M/d",
@@ -40,7 +41,7 @@ namespace FormService
             "yyyy MM dd", "yyyy MM d", "yyyy M dd", "yyyy M d", "y MM d", "yy MM dd", "y MM d", "y M d", "y M d", "yy MM dd", "yy MM d", "yy M dd", "yy M d",
             "yyyy:MM:dd", "yyyy:MM:d", "yyyy:M:dd", "yyyy:M:d", "y:MM:d", "yy:MM:dd", "y:MM:d", "y:M:d", "y:M:d", "yy:MM:dd", "yy:MM:d", "yy:M:dd", "yy:M:d"
         };
-        static string[] yeardaymonth =
+        static string[] g_aYeardaymonth =
         {
             "yyyy-dd-MM", "yyyy-d-MM", "yyyy-dd-M", "yyyy-d-M", "y-d-MM", "yy-dd-MM", "y-d-MM", "y-d-M", "y-d-M", "yy-dd-MM", "yy-d-MM", "yy-dd-MM", "yy-d-M",
             "yyyy/dd/MM", "yyyy/d/MM", "yyyy/dd/M", "yyyy/d/M", "y/d/MM", "yy/dd/MM", "y/d/MM", "y/d/M", "y/d/M", "yy/dd/MM", "yy/d/MM", "yy/dd/MM", "yy/d/M",
@@ -104,74 +105,180 @@ namespace FormService
         }
         public static DateTime ParseDateTimeInWaterfall(string strInputDate)
         {
-            DateTime dtDate;
-            int daysDistance;
-            if (DateTime.TryParseExact(strInputDate, daymonthyear, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            string[] Methodparams = new string[1];
+            Methodparams[0] = strInputDate;
+
+            string XMLPath = AppSettings.App_Path() + AppSettings.App_Name() + "Setup.xml";
+
+            Type thisType = typeof(LocalizationManager);
+            MethodInfo method;
+            DateTime returnedDateTime = DateTime.MinValue;
+            try
             {
-                if (XMLSettings.g_bUseDistanceRule)
+                method = thisType.GetMethod(XMLSettings.g_aMethodOrder[0].ToLower());
+                returnedDateTime = (DateTime)method.Invoke(null, Methodparams);
+                if (returnedDateTime != DateTime.MinValue)
                 {
-                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
-                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
-                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
-                    {
-                        return dtDate;
-                    }
-                }
-                else
-                {
-                    return dtDate;
+                    return returnedDateTime;
                 }
             }
-            if (DateTime.TryParseExact(strInputDate, monthdayyear, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            catch(Exception ex)
             {
-                if (XMLSettings.g_bUseDistanceRule)
+                Logging.LogMessage("LocalizationManager::An Error Occurred While accessing this method: " + XMLSettings.g_aMethodOrder[0] + ", Make sure you spelled it correctly");
+                Logging.LogMessage("LocalizationManager::Available MethodNames: daymonthyear, monthdayyear, yearmonthday, yeardaymonth");
+            }
+
+            try
+            {
+                if (XMLSettings.g_aMethodOrder.Count > 1)
                 {
-                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
-                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
-                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    method = thisType.GetMethod(XMLSettings.g_aMethodOrder[1].ToLower());
+                    returnedDateTime = (DateTime)method.Invoke(null, Methodparams);
+                    if(returnedDateTime != DateTime.MinValue)
                     {
-                        return dtDate;
+                        return returnedDateTime;
                     }
-                }
-                else
-                {
-                    return dtDate;
                 }
             }
-            if (DateTime.TryParseExact(strInputDate, yearmonthday, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            catch (Exception ex)
             {
-                if (XMLSettings.g_bUseDistanceRule)
+                Logging.LogMessage("LocalizationManager::An Error Occurred While accessing this method: " + XMLSettings.g_aMethodOrder[1] + ", Make sure you spelled it correctly");
+                Logging.LogMessage("LocalizationManager::Available MethodNames: daymonthyear, monthdayyear, yearmonthday, yeardaymonth");
+            }
+
+            try
+            {
+                if (XMLSettings.g_aMethodOrder.Count > 2)
                 {
-                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
-                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
-                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    method = thisType.GetMethod(XMLSettings.g_aMethodOrder[2].ToLower());
+                    returnedDateTime = (DateTime)method.Invoke(null, Methodparams);
+                    if (returnedDateTime != DateTime.MinValue)
                     {
-                        return dtDate;
+                        return returnedDateTime;
                     }
-                }
-                else
-                {
-                    return dtDate;
                 }
             }
-            if (DateTime.TryParseExact(strInputDate, yeardaymonth, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            catch (Exception ex)
             {
-                if (XMLSettings.g_bUseDistanceRule)
+                Logging.LogMessage("LocalizationManager::An Error Occurred While accessing this method: " + XMLSettings.g_aMethodOrder[2] + ", Make sure you spelled it correctly");
+                Logging.LogMessage("LocalizationManager::Available MethodNames: daymonthyear, monthdayyear, yearmonthday, yeardaymonth");
+            }
+
+            try
+            {
+                if (XMLSettings.g_aMethodOrder.Count > 3)
                 {
-                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
-                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
-                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    method = thisType.GetMethod(XMLSettings.g_aMethodOrder[3].ToLower());
+                    returnedDateTime = (DateTime)method.Invoke(null, Methodparams);
+                    if (returnedDateTime != DateTime.MinValue)
                     {
-                        return dtDate;
+                        return returnedDateTime;
                     }
                 }
-                else
-                {
-                    return dtDate;
-                }
+            }
+            catch (Exception ex)
+            {
+                Logging.LogMessage("LocalizationManager::An Error Occurred While accessing this method: " + XMLSettings.g_aMethodOrder[3] + ", Make sure you spelled it correctly");
+                Logging.LogMessage("LocalizationManager::Available MethodNames: daymonthyear, monthdayyear, yearmonthday, yeardaymonth");
+                return DateTime.Now;
             }
             return DateTime.Now;
         }
 
+        #region Waterfallmethods
+
+        public static DateTime daymonthyear(string strInputDate)
+        {
+            int daysDistance;
+            DateTime dtDate;
+            if (DateTime.TryParseExact(strInputDate, g_aDaymonthyear, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            {
+                if (XMLSettings.g_bUseDistanceRule)
+                {
+                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
+                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
+                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    {
+                        return dtDate;
+                    }
+                }
+                else
+                {
+                    return dtDate;
+                }
+            }
+            return DateTime.MinValue;
+            
+        }
+
+        public static DateTime monthdayyear(string strInputDate)
+        {
+            int daysDistance;
+            DateTime dtDate;
+            if (DateTime.TryParseExact(strInputDate, g_aMonthdayyear, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            {
+                if (XMLSettings.g_bUseDistanceRule)
+                {
+                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
+                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
+                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    {
+                        return dtDate;
+                    }
+                }
+                else
+                {
+                    return dtDate;
+                }
+            }
+            return DateTime.MinValue;
+        }
+
+        public static DateTime yearmonthday(string strInputDate)
+        {
+            int daysDistance;
+            DateTime dtDate;
+            if (DateTime.TryParseExact(strInputDate, g_aYearmonthday, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            {
+                if (XMLSettings.g_bUseDistanceRule)
+                {
+                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
+                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
+                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    {
+                        return dtDate;
+                    }
+                }
+                else
+                {
+                    return dtDate;
+                }
+            }
+            return DateTime.MinValue;
+        }
+
+        public static DateTime yeardaymonth(string strInputDate)
+        {
+            int daysDistance;
+            DateTime dtDate;
+            if (DateTime.TryParseExact(strInputDate, g_aYeardaymonth, CultureInfo.InvariantCulture, DateTimeStyles.None, out dtDate))
+            {
+                if (XMLSettings.g_bUseDistanceRule)
+                {
+                    daysDistance = (int)(DateTime.Now.Date - dtDate.Date).TotalDays;
+                    if (XMLSettings.g_bDistanceRuleFuture) { if (daysDistance < 0) { daysDistance *= -1; } }
+                    if (daysDistance <= XMLSettings.g_iDistanceRuleDays && daysDistance >= 0)
+                    {
+                        return dtDate;
+                    }
+                }
+                else
+                {
+                    return dtDate;
+                }
+            }
+            return DateTime.MinValue;
+        }
+        #endregion
     }
 }

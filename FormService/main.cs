@@ -25,8 +25,9 @@ namespace FormService
             try
             {
                 string sSetupXMLPath = AppSettings.App_Path() + AppSettings.App_Name() + "Setup.xml";
-                Logging.LogMessage("OnLoad::SetupXMLPath, " + sSetupXMLPath);
-                XMLSettings.LoadXMLSettings(sSetupXMLPath);
+                Logging.LogMessage("Constructor::SetupXMLPath, " + sSetupXMLPath);
+                XMLSettings.LoadBaseSettings(sSetupXMLPath);
+                XMLSettings.LoadDefaults(sSetupXMLPath);
 
                 g_oBatman.NewBatchProcess += G_oBatman_NewBatchProcess;
             }
