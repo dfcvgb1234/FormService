@@ -96,9 +96,10 @@
             this.label29 = new System.Windows.Forms.Label();
             this.txt_batchclass = new System.Windows.Forms.TextBox();
             this.btn_apply = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button3 = new System.Windows.Forms.Button();
+            this.btn_CANCEL = new System.Windows.Forms.Button();
+            this.bnt_OK = new System.Windows.Forms.Button();
             this.ofd_timestringDiag = new System.Windows.Forms.OpenFileDialog();
+            this.btn_verify = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -456,7 +457,7 @@
             this.tableLayoutPanel2.ColumnCount = 3;
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 48.65526F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 51.34474F));
-            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 122F));
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 126F));
             this.tableLayoutPanel2.Controls.Add(this.cb_distanceruledays, 2, 5);
             this.tableLayoutPanel2.Controls.Add(this.txt_distancerulefuture, 1, 6);
             this.tableLayoutPanel2.Controls.Add(this.txt_usedistancerule, 1, 4);
@@ -495,7 +496,7 @@
             // cb_distanceruledays
             // 
             this.cb_distanceruledays.FormattingEnabled = true;
-            this.cb_distanceruledays.Location = new System.Drawing.Point(395, 136);
+            this.cb_distanceruledays.Location = new System.Drawing.Point(391, 136);
             this.cb_distanceruledays.Name = "cb_distanceruledays";
             this.cb_distanceruledays.Size = new System.Drawing.Size(102, 21);
             this.cb_distanceruledays.TabIndex = 17;
@@ -504,33 +505,33 @@
             // 
             // txt_distancerulefuture
             // 
-            this.txt_distancerulefuture.Location = new System.Drawing.Point(195, 162);
+            this.txt_distancerulefuture.Location = new System.Drawing.Point(193, 162);
             this.txt_distancerulefuture.Name = "txt_distancerulefuture";
-            this.txt_distancerulefuture.Size = new System.Drawing.Size(191, 20);
+            this.txt_distancerulefuture.Size = new System.Drawing.Size(189, 20);
             this.txt_distancerulefuture.TabIndex = 23;
             this.txt_distancerulefuture.TextChanged += new System.EventHandler(this.txt_distancerulefuture_TextChanged);
             // 
             // txt_usedistancerule
             // 
-            this.txt_usedistancerule.Location = new System.Drawing.Point(195, 110);
+            this.txt_usedistancerule.Location = new System.Drawing.Point(193, 110);
             this.txt_usedistancerule.Name = "txt_usedistancerule";
-            this.txt_usedistancerule.Size = new System.Drawing.Size(191, 20);
+            this.txt_usedistancerule.Size = new System.Drawing.Size(189, 20);
             this.txt_usedistancerule.TabIndex = 22;
             this.txt_usedistancerule.TextChanged += new System.EventHandler(this.txt_usedistancerule_TextChanged);
             // 
             // txt_usewaterfallformatter
             // 
-            this.txt_usewaterfallformatter.Location = new System.Drawing.Point(195, 84);
+            this.txt_usewaterfallformatter.Location = new System.Drawing.Point(193, 84);
             this.txt_usewaterfallformatter.Name = "txt_usewaterfallformatter";
-            this.txt_usewaterfallformatter.Size = new System.Drawing.Size(191, 20);
+            this.txt_usewaterfallformatter.Size = new System.Drawing.Size(189, 20);
             this.txt_usewaterfallformatter.TabIndex = 21;
             this.txt_usewaterfallformatter.TextChanged += new System.EventHandler(this.txt_usewaterfallformatter_TextChanged);
             // 
             // txt_targettimeformat
             // 
-            this.txt_targettimeformat.Location = new System.Drawing.Point(195, 58);
+            this.txt_targettimeformat.Location = new System.Drawing.Point(193, 58);
             this.txt_targettimeformat.Name = "txt_targettimeformat";
-            this.txt_targettimeformat.Size = new System.Drawing.Size(191, 20);
+            this.txt_targettimeformat.Size = new System.Drawing.Size(189, 20);
             this.txt_targettimeformat.TabIndex = 20;
             this.txt_targettimeformat.TextChanged += new System.EventHandler(this.txt_targettimeformat_TextChanged);
             // 
@@ -568,7 +569,7 @@
             // cb_targetdateformat
             // 
             this.cb_targetdateformat.FormattingEnabled = true;
-            this.cb_targetdateformat.Location = new System.Drawing.Point(395, 32);
+            this.cb_targetdateformat.Location = new System.Drawing.Point(391, 32);
             this.cb_targetdateformat.Name = "cb_targetdateformat";
             this.cb_targetdateformat.Size = new System.Drawing.Size(103, 21);
             this.cb_targetdateformat.TabIndex = 1;
@@ -578,7 +579,7 @@
             // cb_targettimeformat
             // 
             this.cb_targettimeformat.FormattingEnabled = true;
-            this.cb_targettimeformat.Location = new System.Drawing.Point(395, 58);
+            this.cb_targettimeformat.Location = new System.Drawing.Point(391, 58);
             this.cb_targettimeformat.Name = "cb_targettimeformat";
             this.cb_targettimeformat.Size = new System.Drawing.Size(102, 21);
             this.cb_targettimeformat.TabIndex = 2;
@@ -599,7 +600,7 @@
             // 
             this.label22.AutoSize = true;
             this.label22.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label22.Location = new System.Drawing.Point(197, 11);
+            this.label22.Location = new System.Drawing.Point(195, 11);
             this.label22.Margin = new System.Windows.Forms.Padding(5, 8, 0, 0);
             this.label22.Name = "label22";
             this.label22.Size = new System.Drawing.Size(39, 13);
@@ -610,7 +611,7 @@
             // 
             this.label23.AutoSize = true;
             this.label23.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label23.Location = new System.Drawing.Point(397, 11);
+            this.label23.Location = new System.Drawing.Point(393, 11);
             this.label23.Margin = new System.Windows.Forms.Padding(5, 8, 0, 0);
             this.label23.Name = "label23";
             this.label23.Size = new System.Drawing.Size(90, 13);
@@ -650,7 +651,7 @@
             // cb_usewaterfallformatter
             // 
             this.cb_usewaterfallformatter.FormattingEnabled = true;
-            this.cb_usewaterfallformatter.Location = new System.Drawing.Point(395, 84);
+            this.cb_usewaterfallformatter.Location = new System.Drawing.Point(391, 84);
             this.cb_usewaterfallformatter.Name = "cb_usewaterfallformatter";
             this.cb_usewaterfallformatter.Size = new System.Drawing.Size(102, 21);
             this.cb_usewaterfallformatter.TabIndex = 15;
@@ -660,7 +661,7 @@
             // cb_usedistancerule
             // 
             this.cb_usedistancerule.FormattingEnabled = true;
-            this.cb_usedistancerule.Location = new System.Drawing.Point(395, 110);
+            this.cb_usedistancerule.Location = new System.Drawing.Point(391, 110);
             this.cb_usedistancerule.Name = "cb_usedistancerule";
             this.cb_usedistancerule.Size = new System.Drawing.Size(102, 21);
             this.cb_usedistancerule.TabIndex = 16;
@@ -670,7 +671,7 @@
             // cb_distancerulefuture
             // 
             this.cb_distancerulefuture.FormattingEnabled = true;
-            this.cb_distancerulefuture.Location = new System.Drawing.Point(395, 162);
+            this.cb_distancerulefuture.Location = new System.Drawing.Point(391, 162);
             this.cb_distancerulefuture.Name = "cb_distancerulefuture";
             this.cb_distancerulefuture.Size = new System.Drawing.Size(102, 21);
             this.cb_distancerulefuture.TabIndex = 17;
@@ -679,17 +680,17 @@
             // 
             // txt_ruledays
             // 
-            this.txt_ruledays.Location = new System.Drawing.Point(195, 136);
+            this.txt_ruledays.Location = new System.Drawing.Point(193, 136);
             this.txt_ruledays.Name = "txt_ruledays";
-            this.txt_ruledays.Size = new System.Drawing.Size(191, 20);
+            this.txt_ruledays.Size = new System.Drawing.Size(189, 20);
             this.txt_ruledays.TabIndex = 18;
             this.txt_ruledays.ValueChanged += new System.EventHandler(this.txt_ruledays_ValueChanged);
             // 
             // txt_targetdateformat
             // 
-            this.txt_targetdateformat.Location = new System.Drawing.Point(195, 32);
+            this.txt_targetdateformat.Location = new System.Drawing.Point(193, 32);
             this.txt_targetdateformat.Name = "txt_targetdateformat";
-            this.txt_targetdateformat.Size = new System.Drawing.Size(191, 20);
+            this.txt_targetdateformat.Size = new System.Drawing.Size(189, 20);
             this.txt_targetdateformat.TabIndex = 19;
             this.txt_targetdateformat.TextChanged += new System.EventHandler(this.txt_targetdateformat_TextChanged);
             // 
@@ -843,23 +844,25 @@
             this.btn_apply.UseVisualStyleBackColor = true;
             this.btn_apply.Click += new System.EventHandler(this.btn_apply_Click);
             // 
-            // button2
+            // btn_CANCEL
             // 
-            this.button2.Location = new System.Drawing.Point(375, 6);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 17;
-            this.button2.Text = "Cancel";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btn_CANCEL.Location = new System.Drawing.Point(375, 6);
+            this.btn_CANCEL.Name = "btn_CANCEL";
+            this.btn_CANCEL.Size = new System.Drawing.Size(75, 23);
+            this.btn_CANCEL.TabIndex = 17;
+            this.btn_CANCEL.Text = "Cancel";
+            this.btn_CANCEL.UseVisualStyleBackColor = true;
+            this.btn_CANCEL.Click += new System.EventHandler(this.btn_CANCEL_Click);
             // 
-            // button3
+            // bnt_OK
             // 
-            this.button3.Location = new System.Drawing.Point(294, 6);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(75, 23);
-            this.button3.TabIndex = 18;
-            this.button3.Text = "OK";
-            this.button3.UseVisualStyleBackColor = true;
+            this.bnt_OK.Location = new System.Drawing.Point(294, 6);
+            this.bnt_OK.Name = "bnt_OK";
+            this.bnt_OK.Size = new System.Drawing.Size(75, 23);
+            this.bnt_OK.TabIndex = 18;
+            this.bnt_OK.Text = "OK";
+            this.bnt_OK.UseVisualStyleBackColor = true;
+            this.bnt_OK.Click += new System.EventHandler(this.bnt_OK_Click);
             // 
             // ofd_timestringDiag
             // 
@@ -868,14 +871,25 @@
             this.ofd_timestringDiag.Filter = "XML Files|*.xml";
             this.ofd_timestringDiag.Title = "Locate XML File";
             // 
+            // btn_verify
+            // 
+            this.btn_verify.Location = new System.Drawing.Point(213, 6);
+            this.btn_verify.Name = "btn_verify";
+            this.btn_verify.Size = new System.Drawing.Size(75, 23);
+            this.btn_verify.TabIndex = 19;
+            this.btn_verify.Text = "Verify XML";
+            this.btn_verify.UseVisualStyleBackColor = true;
+            this.btn_verify.Click += new System.EventHandler(this.btn_verify_Click);
+            // 
             // SetupForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(538, 317);
-            this.Controls.Add(this.button3);
-            this.Controls.Add(this.button2);
+            this.Controls.Add(this.btn_verify);
+            this.Controls.Add(this.bnt_OK);
+            this.Controls.Add(this.btn_CANCEL);
             this.Controls.Add(this.btn_apply);
             this.Controls.Add(this.txt_batchclass);
             this.Controls.Add(this.label29);
@@ -950,8 +964,8 @@
         private System.Windows.Forms.Label label29;
         private System.Windows.Forms.TextBox txt_batchclass;
         private System.Windows.Forms.Button btn_apply;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button btn_CANCEL;
+        private System.Windows.Forms.Button bnt_OK;
         private System.Windows.Forms.ComboBox cb_formattedtime;
         private System.Windows.Forms.ComboBox cb_formatteddate;
         private System.Windows.Forms.ComboBox cb_timestringtoformat;
@@ -973,5 +987,6 @@
         private System.Windows.Forms.TextBox txt_format1;
         private System.Windows.Forms.Button btn_txtListDOWN;
         private System.Windows.Forms.Button btn_txtListUP;
+        private System.Windows.Forms.Button btn_verify;
     }
 }

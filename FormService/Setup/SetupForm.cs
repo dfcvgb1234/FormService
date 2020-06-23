@@ -130,6 +130,11 @@ namespace FormService
             }
         }
 
+        private bool GetState()
+        {
+            return btn_apply.Enabled;
+        }
+
         #region StateChange
         private void txt_shortdateformat_TextChanged(object sender, EventArgs e)
         {
@@ -213,7 +218,7 @@ namespace FormService
             else if(message != "" && validated == true)
             {
                 MessageBox.Show(message, "WARNING", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                if (!XMLSettings.XMLElementExists(XMLPath, BatchClass.Name.Replace(" ", "")))
+                if (!XMLSettings.XMLBatchClassElementExists(XMLPath, BatchClass.Name.Replace(" ", "")))
                 {
                     XMLSettings.CreateNewBatchClassNodes(XMLPath, BatchClass.Name.Replace(" ", ""));
                 }
@@ -228,7 +233,7 @@ namespace FormService
             }
             else
             {
-                if (!XMLSettings.XMLElementExists(XMLPath, BatchClass.Name.Replace(" ", "")))
+                if (!XMLSettings.XMLBatchClassElementExists(XMLPath, BatchClass.Name.Replace(" ", "")))
                 {
                     XMLSettings.CreateNewBatchClassNodes(XMLPath, BatchClass.Name.Replace(" ", ""));
                 }
@@ -565,6 +570,132 @@ namespace FormService
         private void txt_format4_TextChanged(object sender, EventArgs e)
         {
             ApplyState(true);
+        }
+
+        private void bnt_OK_Click(object sender, EventArgs e)
+        {
+            if(GetState())
+            {
+                btn_apply.PerformClick();
+            }
+            Environment.Exit(0);
+        }
+
+        private void btn_CANCEL_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void btn_verify_Click(object sender, EventArgs e)
+        {
+            if(XMLSettings.VerifyXMLStructure(XMLPath, BatchClass.Name.Replace(" ", ""), out string message))
+            {
+                MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                DialogResult result = MessageBox.Show(message + "\n\nDo you want to reset all values to default?", "ERROR", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                
+                if(result == DialogResult.Yes)
+                {
+                    result = MessageBox.Show("Are you sure you want to reset everything back to default?\n\nAll data will be wiped!", "WARNING", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                    
+                    if(result == DialogResult.Yes)
+                    {
+                        XMLSettings.ResetBatchClassValuesToDefault(XMLPath, BatchClass.Name.Replace(" ", ""));
+                        UpdateUI();
+                        ApplyState(false);
+                    }
+                }
+            }
+        }
+
+        private void UpdateUI()
+        {
+            txt_batchclass.Text = BatchClass.Name;
+
+            XMLPath = AppSettings.App_Path() + AppSettings.App_Name() + "Setup.xml";
+            XMLSettings.LoadBaseSettings(XMLPath);
+            XMLSettings.LoadDefaults(XMLPath);
+            XMLSettings.LoadXMLSettings(XMLPath, BatchClass.Name.Replace(" ", ""));
+
+            Logging.LogMessage("UpdateUI::DoneLoadingXMLSettings");
+
+            // Defaults
+            cb_shortdateformat.Items.AddRange(XMLSettings.g_aShortDateFormat_DEF);
+            cb_longdateformat.Items.AddRange(XMLSettings.g_aLongDateFormat_DEF);
+            cb_shorttimeformat.Items.AddRange(XMLSettings.g_aShortTimeFormat_DEF);
+            cb_longtimeformat.Items.AddRange(XMLSettings.g_aLongTimeFormat_DEF);
+            cb_localizationvalue.Items.AddRange(XMLSettings.g_aLocalizationValue_DEF);
+            cb_timestringtoformat.Items.AddRange(XMLSettings.g_aTimeStringToFormat_DEF);
+            cb_formatteddate.Items.AddRange(XMLSettings.g_aFormattedDate_DEF);
+            cb_formattedtime.Items.AddRange(XMLSettings.g_aFormattedTime_DEF);
+            cb_targetdateformat.Items.AddRange(XMLSettings.g_aTargetDateFormat_DEF);
+            cb_targettimeformat.Items.AddRange(XMLSettings.g_aTargetTimeFormat_DEF);
+            cb_usewaterfallformatter.Items.AddRange(XMLSettings.g_aUseWaterfallFormater_DEF);
+            cb_usedistancerule.Items.AddRange(XMLSettings.g_aUseDistanceRule_DEF);
+            cb_distanceruledays.Items.AddRange(XMLSettings.g_aDistanceRuleDays_DEF);
+            cb_distancerulefuture.Items.AddRange(XMLSettings.g_aDistanceRuleFuture_DEF);
+
+            // Reset combobox selected index
+            cb_shortdateformat.SelectedIndex = 0;
+            cb_longdateformat.SelectedIndex = 0;
+            cb_shorttimeformat.SelectedIndex = 0;
+            cb_longtimeformat.SelectedIndex = 0;
+            cb_localizationvalue.SelectedIndex = 0;
+            cb_timestringtoformat.SelectedIndex = 0;
+            cb_timestringtoformat.Items.Add("Browse ...");
+            cb_formatteddate.SelectedIndex = 0;
+            cb_formattedtime.SelectedIndex = 0;
+            cb_targetdateformat.SelectedIndex = 0;
+            cb_targettimeformat.SelectedIndex = 0;
+            cb_usewaterfallformatter.SelectedIndex = 0;
+            cb_usedistancerule.SelectedIndex = 0;
+            cb_distanceruledays.SelectedIndex = 0;
+            cb_distancerulefuture.SelectedIndex = 0;
+
+            // Value Assignments
+            txt_shortdateformat.Text = XMLSettings.g_sShortDateFormat;
+            txt_longdateformat.Text = XMLSettings.g_sLongDateFormat;
+            txt_shorttimeformat.Text = XMLSettings.g_sShortTimeFormat;
+            txt_longtimeformat.Text = XMLSettings.g_sLongTimeFormat;
+            txt_localizationvalue.Text = XMLSettings.g_sLocalizationValue;
+            txt_stringtoformat.Text = XMLSettings.g_sTimeStringToFormat;
+            txt_formatteddate.Text = XMLSettings.g_sFormattedDate;
+            txt_formattedtime.Text = XMLSettings.g_sFormattedTime;
+
+            // Settings
+            txt_targetdateformat.Text = XMLSettings.g_sTargetDateFormat;
+            txt_targettimeformat.Text = XMLSettings.g_sTargetTimeFormat;
+            txt_usewaterfallformatter.Text = XMLSettings.g_bUseWaterfallFormatter.ToString();
+            txt_usedistancerule.Text = XMLSettings.g_bUseDistanceRule.ToString();
+            txt_ruledays.Text = XMLSettings.g_iDistanceRuleDays.ToString();
+            txt_distancerulefuture.Text = XMLSettings.g_bDistanceRuleFuture.ToString();
+
+            //Waterfall Check Priority
+            txt_format1.Text = XMLSettings.g_aMethodOrder[0];
+            if (XMLSettings.g_aMethodOrder.Count > 1)
+            {
+                txt_format2.Text = XMLSettings.g_aMethodOrder[1];
+            }
+            if (XMLSettings.g_aMethodOrder.Count > 2)
+            {
+                txt_format3.Text = XMLSettings.g_aMethodOrder[2];
+            }
+            if (XMLSettings.g_aMethodOrder.Count > 3)
+            {
+                txt_format4.Text = XMLSettings.g_aMethodOrder[3];
+            }
+
+            // Internal variable setup
+            g_aNewMethodOrder = XMLSettings.g_aMethodOrder;
+            g_aTxtMethodOrder = new List<TextBox>();
+            g_aTxtMethodOrder.Add(txt_format1);
+            g_aTxtMethodOrder.Add(txt_format2);
+            g_aTxtMethodOrder.Add(txt_format3);
+            g_aTxtMethodOrder.Add(txt_format4);
+
+            Logging.LogMessage("UpdateUI::FinishedUpdating");
         }
     }
 }

@@ -60,12 +60,38 @@ namespace FormService
         // WaterfallPrioritization
         public static List<string> g_aMethodOrder;
 
+        public enum BatchNodes
+        {
+            ShortDateFormat,
+            LongDateFormat,
+            ShortTimeFormat,
+            LongTimeFormat,
+            LocalizationValue,
+            TimeStringToFormat,
+            FormattedDate,
+            FormattedTime,
+            TargetDateFormat,
+            TargetTimeFormat,
+            UseWaterfallFormatter,
+            FormatCheckPriority,
+            UseDistanceRule,
+            DistanceRuleDays,
+            DistanceRuleCanGoToFuture
+        }
+
         public static void LoadUserSettings(string XMLPath)
         {
             XmlDocument oUserProfileSetupXML = new XmlDocument();
             string sXmlValue;
 
-            oUserProfileSetupXML.Load(XMLPath);
+            try
+            {
+                oUserProfileSetupXML.Load(XMLPath);
+            }
+            catch(Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             sXmlValue = oUserProfileSetupXML.SelectSingleNode("//Username").InnerText;
             if (sXmlValue.Length != 0)
@@ -93,7 +119,14 @@ namespace FormService
         public static void LoadDefaults(string XMLPath)
         {
             XmlDocument oSetupXML = new XmlDocument();
-            oSetupXML.Load(XMLPath);
+            try
+            {
+                oSetupXML.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             string sXmlValue;
             XmlNode selectedNode;
@@ -227,7 +260,15 @@ namespace FormService
         public static void LoadBaseSettings(string XMLPath)
         {
             XmlDocument oSetupXML = new XmlDocument();
-            oSetupXML.Load(XMLPath);
+
+            try
+            {
+                oSetupXML.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             string sXmlValue;
             try
@@ -263,7 +304,7 @@ namespace FormService
         {
             string className = "//" + batchClassName;
 
-            if(!XMLElementExists(XMLPath, batchClassName))
+            if(!XMLBatchClassElementExists(XMLPath, batchClassName))
             {
                 Logging.LogMessage("LoadXMLSettings::CreatingNewBatchClassNodes");
                 CreateNewBatchClassNodes(XMLPath, batchClassName);
@@ -271,7 +312,15 @@ namespace FormService
             }
 
             XmlDocument oSetupXML = new XmlDocument();
-            oSetupXML.Load(XMLPath);
+
+            try
+            {
+                oSetupXML.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             string sXmlValue;
 
@@ -427,7 +476,7 @@ namespace FormService
                 if (g_bUseWaterfallFormatter)
                 {
                     sXmlValue = oSetupXML.SelectSingleNode(className).SelectSingleNode("FormatterSettings").SelectSingleNode("WaterfallSettings")
-                                                                                 .SelectSingleNode("UseDistanceRule").InnerText;
+                                                                     .SelectSingleNode("UseDistanceRule").InnerText;
                     if (sXmlValue.Length != 0 || !sXmlValue.ToLower().Contains("false"))
                     {
                         g_bUseDistanceRule = true;
@@ -438,7 +487,8 @@ namespace FormService
                     }
                     Logging.LogMessage("LoadXMLSettings::UseDistanceRule, " + g_bUseDistanceRule);
 
-                    foreach (XmlNode formatOrder in oSetupXML.SelectSingleNode(className).SelectSingleNode("FormatterSettings").SelectSingleNode("WaterfallSettings").SelectSingleNode("FormatCheckPriority").ChildNodes)
+                    foreach (XmlNode formatOrder in oSetupXML.SelectSingleNode(className).SelectSingleNode("FormatterSettings").SelectSingleNode("WaterfallSettings")
+                                                                                         .SelectSingleNode("FormatCheckPriority").ChildNodes)
                     {
                         sXmlValue = formatOrder.InnerText;
                         if (sXmlValue.Length != 0)
@@ -451,8 +501,8 @@ namespace FormService
                     if (g_bUseDistanceRule)
                     {
                         sXmlValue = oSetupXML.SelectSingleNode(className).SelectSingleNode("FormatterSettings").SelectSingleNode("WaterfallSettings")
-                                                                                     .SelectSingleNode("DistanceRuleSettings")
-                                                                                     .SelectSingleNode("DistanceRuleDays").InnerText;
+                                                                         .SelectSingleNode("DistanceRuleSettings")
+                                                                         .SelectSingleNode("DistanceRuleDays").InnerText;
                         if (sXmlValue.Length != 0)
                         {
                             if (!Int32.TryParse(sXmlValue, out g_iDistanceRuleDays))
@@ -497,7 +547,75 @@ namespace FormService
                 }
                 if (g_aMethodOrder.Count == 0)
                 {
+                    Logging.LogMessage("LoadXMLSettings::MethodOrder is empty using defaults");
                     g_aMethodOrder = g_aMethodOrder_DEF[0];
+                    if(XMLElementExists(XMLPath, className + "/FormatterSettings/WaterfallSettings/FormatCheckPriority"))
+                    {
+                        XmlElement format1 = oSetupXML.CreateElement("Format");
+                        format1.InnerText = g_aMethodOrder_DEF[0][0];
+                        g_aMethodOrder.Add(g_aMethodOrder_DEF[0][0]);
+                        oSetupXML.SelectSingleNode(className + "//WaterfallSettings/FormatCheckPriority").AppendChild(format1);
+
+                        if (g_aMethodOrder_DEF[0].Count > 1)
+                        {
+                            XmlElement format2 = oSetupXML.CreateElement("Format");
+                            format2.InnerText = g_aMethodOrder_DEF[0][1];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][1]);
+                            oSetupXML.SelectSingleNode(className + "//WaterfallSettings/FormatCheckPriority").AppendChild(format2);
+                        }
+
+                        if (g_aMethodOrder_DEF[0].Count > 2)
+                        {
+                            XmlElement format3 = oSetupXML.CreateElement("Format");
+                            format3.InnerText = g_aMethodOrder_DEF[0][2];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][2]);
+                            oSetupXML.SelectSingleNode(className + "//WaterfallSettings/FormatCheckPriority").AppendChild(format3);
+                        }
+
+                        if (g_aMethodOrder_DEF[0].Count > 3)
+                        {
+                            XmlElement format4 = oSetupXML.CreateElement("Format");
+                            format4.InnerText = g_aMethodOrder_DEF[0][3];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][3]);
+                            oSetupXML.SelectSingleNode(className + "//WaterfallSettings/FormatCheckPriority").AppendChild(format4);
+                        }
+                    }
+                    else
+                    {
+                        XmlElement parent = oSetupXML.CreateElement("FormatCheckPriority");
+
+                        XmlElement format1 = oSetupXML.CreateElement("Format");
+                        format1.InnerText = g_aMethodOrder_DEF[0][0];
+                        g_aMethodOrder.Add(g_aMethodOrder_DEF[0][0]);
+                        parent.AppendChild(format1);
+
+                        if (g_aMethodOrder_DEF[0].Count > 1)
+                        {
+                            XmlElement format2 = oSetupXML.CreateElement("Format");
+                            format2.InnerText = g_aMethodOrder_DEF[0][1];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][1]);
+                            parent.AppendChild(format2);
+                        }
+
+                        if (g_aMethodOrder_DEF[0].Count > 2)
+                        {
+                            XmlElement format3 = oSetupXML.CreateElement("Format");
+                            format3.InnerText = g_aMethodOrder_DEF[0][2];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][2]);
+                            parent.AppendChild(format3);
+                        }
+
+                        if (g_aMethodOrder_DEF[0].Count > 3)
+                        {
+                            XmlElement format4 = oSetupXML.CreateElement("Format");
+                            format4.InnerText = g_aMethodOrder_DEF[0][3];
+                            g_aMethodOrder.Add(g_aMethodOrder_DEF[0][3]);
+                            parent.AppendChild(format4);
+                        }
+
+                        oSetupXML.SelectSingleNode(className + "//WaterfallSettings").AppendChild(parent);
+                    }
+                    
                 }
                 Logging.LogMessage("LoadXMLSettings::Done Loading Settings");
             }
@@ -514,7 +632,15 @@ namespace FormService
                                            string distanceruledays = "", string distancerulefuture = "")
         {
             XmlDocument oSetupXML = new XmlDocument();
-            oSetupXML.Load(XMLPath);
+
+            try
+            {
+                oSetupXML.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             string sXmlValue;
 
@@ -624,14 +750,47 @@ namespace FormService
             }
         }
 
+        public static bool XMLBatchClassElementExists(string XMLPath, string batchClassName)
+        {
+            XmlDocument xml = new XmlDocument();
+
+            try
+            {
+                xml.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
+
+            XmlNode node = xml.SelectSingleNode("//" + batchClassName);
+
+            if(node == null)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
         public static bool XMLElementExists(string XMLPath, string elementName)
         {
             XmlDocument xml = new XmlDocument();
 
-            xml.Load(XMLPath);
-            XmlNode node = xml.SelectSingleNode("//" + elementName);
+            try
+            {
+                xml.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
-            if(node == null)
+            XmlNode node = xml.SelectSingleNode(elementName);
+
+            if (node == null)
             {
                 return false;
             }
@@ -646,7 +805,14 @@ namespace FormService
             XmlDocument xml = new XmlDocument();
             string sXmlValue;
 
-            xml.Load(XMLPath);
+            try
+            {
+                xml.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
 
             g_aMethodOrder = new List<string>();
 
@@ -778,6 +944,164 @@ namespace FormService
             xml.SelectSingleNode("Settings").AppendChild(batchClass);
 
             xml.Save(XMLPath);
+        }
+
+        public static bool VerifyXMLStructure(string XMLPath, string batchClassName, out string message)
+        {
+            message = "";
+            string className = "//" + batchClassName;
+            string node;
+
+            node = className;
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/BatchFields";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/ShortDateFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/LongDateFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/ShortTimeFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/LongTimeFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/LocalizationValue";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/TimeStringToFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/FormattedDate";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/BatchFields/FormattedTime";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/Formatter";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/Formatter/TargetDateFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/Formatter/TargetTimeFormat";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/UseWaterfallFormatter";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings/UseDistanceRule";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings/FormatCheckPriority";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings/DistanceRuleSettings";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} and all of its children are missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings/DistanceRuleSettings/DistanceRuleDays";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            node = className + "/FormatterSettings/WaterfallSettings/DistanceRuleSettings/DistanceRuleCanGoToFuture";
+            if (!XMLElementExists(XMLPath, node))
+            {
+                message = String.Format("The node: {0} is missing", node);
+                return false;
+            }
+            message = "XML Integrity has been successfully verified";
+            return true;
+        }
+
+        public static void ResetBatchClassValuesToDefault(string XMLPath, string batchClassName)
+        {
+            XmlDocument xml = new XmlDocument();
+            string sXmlValue;
+            string className = "//" + batchClassName;
+
+            try
+            {
+                xml.Load(XMLPath);
+            }
+            catch (Exception ex)
+            {
+                Logging.WriteToEventLog("An error occured while trying to load userprofile XML Settings, please make sure the XML file is valid");
+            }
+
+            xml.SelectSingleNode(className).RemoveAll();
+            xml.SelectSingleNode("Settings").RemoveChild(xml.SelectSingleNode(className));
+            xml.Save(XMLPath);
+
+            CreateNewBatchClassNodes(XMLPath, batchClassName);
         }
     }
 }
